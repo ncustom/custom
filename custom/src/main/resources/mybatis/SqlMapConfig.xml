@@ -7,7 +7,7 @@
     <!-- 别名 -->
     <typeAliases>
         <!-- 此包下所有类的全限定名的别名为类名 -->
-        <package name="com.custom.pojo"/>
+        <package name="com.dhf.domain"/>
     </typeAliases>
     <!--<environments default="development">
         <environment id="development">
