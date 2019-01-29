@@ -1,5 +1,6 @@
 package com.dhf.controller;
 
+import com.dhf.service.CategoryService;
 import com.dhf.service.CityService;
 import com.dhf.service.ProvinceService;
 import com.dhf.service.TaskService;
@@ -26,9 +27,14 @@ public class PageController {
 
     @Autowired
     private TaskService taskService;
+    
+    @Autowired
+    private CategoryService categoryService;
 
     @RequestMapping(value = {"/index","/"}, method = RequestMethod.GET )
     public ModelAndView goIndex(ModelAndView mv){
+        List<Map> maps = categoryService.selectAllCategorys();
+        mv.addObject("maps", maps);
         mv.setViewName("index");
         return mv;
     }

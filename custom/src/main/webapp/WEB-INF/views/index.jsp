@@ -21,14 +21,14 @@
         #div3{height: 86px;background: #fff;}
         #title{width: 1300px;height: 86px;background: #fff;margin: 0 auto;}
         #a1{font-size: 24px;color: #000;line-height: 86px;}
-        #div2{width: 1150px;height: 525px;margin: 0 auto;background: #00BFFF;}
+        #div2{width: 1150px;height: 525px;margin: 0 auto;background: #00BFFF;position: relative;}
         #category{width: 265px;height: 100%;float: left;position: relative;}
-        #category ul{color: #fff;}
+        #category ul{width: 265px;color: #fff;position: absolute;z-index: 9;}
         #category ul ol{font-size: 26px;padding-left: 10px;padding-top: 10px;border-bottom: 1px solid #FFFFFF;}
         #category ul li{margin-left: 10px;line-height: 25px;}
         #category span{float: right;}
-        #carousel{width: 883px;height: 100%;float: left;}
-        .div1{height: 100%;background:url(${pageContext.request.contextPath}/img/loader_ico.gif) no-repeat center center;position:relative;left: 0px;position: relative;top: -114px;}
+        #carousel{width: 883px;height: 100%;position: absolute;left: 265px;top: 115px;}
+        .div1{height: 100%;background:url(${pageContext.request.contextPath}/img/loader_ico.gif) no-repeat center center;position:relative;left: 0px;top: -114px;}
         .top{width:883px;height:20px;opacity: 0.7;position:absolute;}
         .bottom{width:883px;height:20px;opacity: 0.7;position: absolute;bottom: 0px;}
         .topcharacters{width: 100px;height: 20px;position: absolute;left: 430px;color: #fff;}
@@ -53,7 +53,8 @@
         .img1{margin-top: 20px;}
         #a3{float: right;margin-top: 30px;}
         .a1{float: right;margin-top: 30px;margin-left: 20px;}
-        #div8{width: 200px;height: 480px;position: absolute;left: 200px;background: #fff;top: 44px;z-index: 10;display: none;}
+        #div8{width: 200px;height: 480px;position: absolute;left: 265px;background: #fff;top: 44px;z-index: 10;display: none;}
+        #div8 ul{width: 200px;position:absolute;z-index: 11;color: black}
         .a2{background: #f5f5f5;color: #333333}
         .tr1{font-size: 14px;color: #495060;}
         .span1{background: #d74f2a;color: #fff;padding: 5px 5px;}
@@ -63,6 +64,8 @@
         #information{width: 130px;height: 150px;background: red;margin-left: 20px;position: relative;z-index: 99;display: none;}
         #ul2 li{line-height: 36px;}
     </style>
+    <script src="${pageContext.request.contextPath}/js/jquery-3.2.0.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/template-web.js"></script>
     <script>
         window.onload=function(){
             var arrImg=[
@@ -130,24 +133,50 @@
             }
             test('div1',arrImg);
 
+
             var oUl1 = document.getElementById('ul1');
             var aLi = oUl1.getElementsByTagName('li');
             var oDiv1 = document.getElementById('div8');
             for(var i = 0; i < aLi.length; i++){
                 aLi[i].index = i;
-                aLi[i].onmousemove=function(){
+                //当鼠标移动到某对象范围的上方时触发的事件
+                aLi[i].onmouseover=function(){
+                    var categoryId = this.getElementsByTagName('input')[0].value;
+                    $.ajax({
+                        url: '${pageContext.request.contextPath}/genre/selectGenresByCategoryId',
+                        type: 'post',
+                        data: {categoryId: categoryId},
+                        dataType: 'json',
+                        success: function (data) {
+                            // 此处data为js对象
+                            var html = template('template1', data);
+                            $('#div8').html(html);
+                        },
+                        error: function (error) {
+                            console.log(error)
+                        },
+                        async: true
+                    })
                     oDiv1.style.display = 'block';
                 }
-                aLi[i].onmouseout=function(){
-                    oDiv1.style.display = 'none';
-                }
+                // oDiv1.onmouseover=function(){
+                //     oDiv1.style.display = 'none';
+                // }
+                // 当鼠标离开某对象范围时触发的事件
+
+            }
+            oDiv1.onmouseover=function(){
+                oDiv1.style.display = 'block';
+            }
+            oDiv1.onmouseout=function(){
+                oDiv1.style.display = 'none';
             }
 
             var oImg1 = document.getElementById('img1');
             var oDiv2 = document.getElementById('information');
 
             var flag=true;
-            oImg1.onclick=function () {
+            oImg1.onClick=function () {
                 if (flag) {
                     oDiv2.style.display = 'block';
                     flag=false;
@@ -162,14 +191,14 @@
 <body style="height: 2000px;">
 <div id="div3">
     <div id="title">
-        <a id="a1" href="index.html"><b>生活服务平台</b></a>
+        <a id="a1" href="${pageContext.request.contextPath}/index"><b>生活服务平台</b></a>
         <a class="a2" href="${pageContext.request.contextPath}/changecity">切换城市</a>
 
         <span><c:if test="${city == null}">北京市</c:if><c:if test="${city != null}">${city.name}</c:if></span>
-        <c:if test="${msg == null}">
+        <c:if test="${login_user == null}">
             <a id="a3" href="/login">登录</a>
         </c:if>
-        <c:if test="${msg != null}">
+        <c:if test="${login_user != null}">
             <div id="div9">
                 <img id="img1" src="${pageContext.request.contextPath}/img/default.png"/>
                 <div id="information">
@@ -188,14 +217,20 @@
 </div>
 <div id="div2">
     <div id="category">
-        <div id="div8"></div>
+        <div id="div8">
+            <script type="text/html" id="template1">
+                <ul>
+                    {{ each genres as value i }}
+                        <li>{{value.genre}}</li>
+                    {{ /each}}
+                </ul>
+            </script>
+        </div>
         <ul id="ul1">
             <ol>分类</ol>
-            <li>外卖<span>></span></li>
-            <li>生活服务<span>></span></li>
-            <li>便利店<span>></span></li>
-            <li>打车/运输<span>></span></li>
-            <li>房产<span>></span></li>
+            <c:forEach items="${maps}" var="map">
+                <li>${map.category}<input type="hidden" value="${map.id}"/><span>></span></li>
+            </c:forEach>
         </ul>
     </div>
     <div id="carousel">
