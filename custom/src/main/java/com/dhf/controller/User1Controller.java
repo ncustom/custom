@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Date;
 
 @Controller
@@ -21,7 +24,7 @@ public class User1Controller {
     @Autowired
     private User1Service user1Service;
 
-    @RequestMapping(value = "/reg", method = RequestMethod.POST)
+    @RequestMapping(value = "/reg")
     public String reg(User1 user1, Model model) {
         int i = user1Service.checkReg(user1.getName1());
         //未被注册
@@ -44,22 +47,24 @@ public class User1Controller {
         return "reg";
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login(User1 user1, Model model, HttpServletRequest request) {
+    @RequestMapping("/login")
+    public void login(User1 user1, Model model, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("login");
         user1.setPwd(MD5.getMD5(user1.getPwd()));
         User1 user = user1Service.checkLogin(user1);
         //不可以登录
         if (user == null) {
+            System.out.println("***");
             model.addAttribute("msg","用户名或者密码错误！");
-            return "login";
+            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
         }
         //可以登录
         model.addAttribute("msg",1);
         request.getSession().setAttribute("login_user",user);
-        return "index";
+        request.getRequestDispatcher("/index").forward(request, response);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/update")
     /*对应方法中使用两个对象来接受参数，会报400错误（错误的请求），请求参数赋不到对象的属性上*/
     public String update(User1 user1,
                          @RequestParam("realName") String realName,
