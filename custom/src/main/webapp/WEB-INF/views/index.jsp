@@ -270,6 +270,24 @@
             </c:forEach>
         </c:if>
     </table>
+    <table border="0" cellspacing="0" cellpadding="0"  width="900px">
+        <tr>
+            <td align="right">
+                <span>第${pageBean.currPage}/${pageBean.totalPage}页</span>&nbsp;&nbsp;
+                <span>总记录数 ：${pageBean.totalCount}条&nbsp;&nbsp;每页显示：${pageBean.pageSize}条</span>
+                <span>
+                <c:if test="${pageBean.currPage != 1}">
+                    <a href="${pageContext.request.contextPath}/index/${city.code}?currPage=1">[首页]</a>&nbsp;&nbsp;
+                    <a href="${pageContext.request.contextPath}/index/${city.code}?currPage=${pageBean.currPage-1}">[上一页]</a>&nbsp;&nbsp;
+                </c:if>
+                <c:if test="${pageBean.currPage != pageBean.totalPage}">
+                    <a href="${pageContext.request.contextPath}/index/${city.code}?currPage=${pageBean.currPage+1}">[下一页]</a>&nbsp;&nbsp;
+                    <a href="${pageContext.request.contextPath}/index/${city.code}?currPage=${pageBean.totalPage}">[尾页]</a>&nbsp;&nbsp;
+                </c:if>
+            </span>
+            </td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>

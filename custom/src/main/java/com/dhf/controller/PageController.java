@@ -1,5 +1,7 @@
 package com.dhf.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.dhf.domain.PageBean;
 import com.dhf.service.CategoryService;
 import com.dhf.service.CityService;
 import com.dhf.service.ProvinceService;
@@ -10,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletException;
@@ -68,10 +71,11 @@ public class PageController {
     }
 
     @RequestMapping("/index/{code}")
-    public void goIndex(@PathVariable String code, ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void goIndex(@PathVariable String code, @RequestParam(defaultValue = "1") Integer currPage, ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, Object> city = cityService.selectCityByCode(code);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        List<Map<String, Object>> tasks = taskService.selectTasksByCode(code);
+        PageBean<Map<String, Object>> pageBean = taskService.selectTasksByCodeByPage(code, currPage);
+        List<Map<String, Object>> tasks = pageBean.getList();
         for (Map<String, Object> map : tasks) {
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 if (entry.getKey().equals("finishTime")) {
@@ -81,11 +85,12 @@ public class PageController {
             }
         }
         if (tasks.size() != 0) {
-            mv.addObject("tasks", tasks);
+            request.setAttribute("tasks", tasks);
         } else {
-            mv.addObject("msg","抱歉，该城市目前没有待接任务！");
+            request.setAttribute("msg", "抱歉，该城市目前没有待接任务！");
         }
-        mv.addObject("city", city);
+        request.setAttribute("pageBean", pageBean);
+        request.getSession().setAttribute("city", city);
         request.getRequestDispatcher("/index").forward(request, response);
     }
 
