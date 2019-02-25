@@ -168,7 +168,8 @@
             oDiv1.onmouseover=function(){
                 oDiv1.style.display = 'block';
             }
-            oDiv1.onmouseout=function(){
+            var oDivC = document.getElementById("category");
+            oDivC.onmouseout=function(){
                 oDiv1.style.display = 'none';
             }
 
@@ -191,7 +192,7 @@
 <body style="height: 2000px;">
 <div id="div3">
     <div id="title">
-        <a id="a1" href="${pageContext.request.contextPath}/index"><b>生活服务平台</b></a>
+        <a id="a1" href="${pageContext.request.contextPath}/index/${city.code}"><b>生活服务平台</b></a>
         <a class="a2" href="${pageContext.request.contextPath}/changecity">切换城市</a>
 
         <span><c:if test="${city == null}">北京市</c:if><c:if test="${city != null}">${city.name}</c:if></span>
@@ -221,7 +222,7 @@
             <script type="text/html" id="template1">
                 <ul>
                     {{ each genres as value i }}
-                        <li>{{value.genre}}</li>
+                        <li><a href="${pageContext.request.contextPath}/index/${city.code}/{{value.id}}">{{value.genre}}</a></li>
                     {{ /each}}
                 </ul>
             </script>
@@ -271,19 +272,36 @@
         </c:if>
     </table>
     <table border="0" cellspacing="0" cellpadding="0"  width="900px">
+
+
         <tr>
             <td align="right">
                 <span>第${pageBean.currPage}/${pageBean.totalPage}页</span>&nbsp;&nbsp;
                 <span>总记录数 ：${pageBean.totalCount}条&nbsp;&nbsp;每页显示：${pageBean.pageSize}条</span>
                 <span>
-                <c:if test="${pageBean.currPage != 1}">
-                    <a href="${pageContext.request.contextPath}/index/${city.code}?currPage=1">[首页]</a>&nbsp;&nbsp;
-                    <a href="${pageContext.request.contextPath}/index/${city.code}?currPage=${pageBean.currPage-1}">[上一页]</a>&nbsp;&nbsp;
+                <%--选择技能--%>
+                <c:if test="${genreId != null}">
+                    <c:if test="${pageBean.currPage != 1}">
+                        <a href="${pageContext.request.contextPath}/index/${city.code}/${genreId}?currPage=1">[首页]</a>&nbsp;&nbsp;
+                        <a href="${pageContext.request.contextPath}/index/${city.code}/${genreId}?currPage=${pageBean.currPage-1}">[上一页]</a>&nbsp;&nbsp;
+                    </c:if>
+                    <c:if test="${pageBean.currPage != pageBean.totalPage}">
+                        <a href="${pageContext.request.contextPath}/index/${city.code}/${genreId}?currPage=${pageBean.currPage+1}">[下一页]</a>&nbsp;&nbsp;
+                        <a href="${pageContext.request.contextPath}/index/${city.code}/${genreId}?currPage=${pageBean.totalPage}">[尾页]</a>&nbsp;&nbsp;
+                    </c:if>
                 </c:if>
-                <c:if test="${pageBean.currPage != pageBean.totalPage}">
-                    <a href="${pageContext.request.contextPath}/index/${city.code}?currPage=${pageBean.currPage+1}">[下一页]</a>&nbsp;&nbsp;
-                    <a href="${pageContext.request.contextPath}/index/${city.code}?currPage=${pageBean.totalPage}">[尾页]</a>&nbsp;&nbsp;
+                <%--未选择技能--%>
+                <c:if test="${genreId == null}">
+                    <c:if test="${pageBean.currPage != 1}">
+                        <a href="${pageContext.request.contextPath}/index/${city.code}?currPage=1">[首页]</a>&nbsp;&nbsp;
+                        <a href="${pageContext.request.contextPath}/index/${city.code}?currPage=${pageBean.currPage-1}">[上一页]</a>&nbsp;&nbsp;
+                    </c:if>
+                    <c:if test="${pageBean.currPage != pageBean.totalPage}">
+                        <a href="${pageContext.request.contextPath}/index/${city.code}?currPage=${pageBean.currPage+1}">[下一页]</a>&nbsp;&nbsp;
+                        <a href="${pageContext.request.contextPath}/index/${city.code}?currPage=${pageBean.totalPage}">[尾页]</a>&nbsp;&nbsp;
+                    </c:if>
                 </c:if>
+
             </span>
             </td>
         </tr>

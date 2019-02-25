@@ -8,4 +8,5 @@ import java.util.Map;
 public interface TaskService {
 
     PageBean<Map<String,Object>> selectTasksByCodeByPage(String code, Integer currPage);
+    PageBean<Map<String,Object>> selectTasksByCodeByPageAndGenreId(String code, Integer currPage, Integer genreId);
 }

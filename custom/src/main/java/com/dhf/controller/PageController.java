@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,21 @@ public class PageController {
     private CategoryService categoryService;
 
     @RequestMapping(value = {"/index","/"})
-    public ModelAndView goIndex(ModelAndView mv){
+    public ModelAndView goIndex(ModelAndView mv, HttpServletRequest request){
+        List<Map> maps = categoryService.selectAllCategorys();
+        Map city = new HashMap();
+        city.put("id", "1");
+        city.put("code", "110100");
+        city.put("name", "北京市");
+        city.put("provincecode ", "110000");
+        request.getSession().setAttribute("city", city);
+        mv.addObject("maps", maps);
+        mv.setViewName("index");
+        return mv;
+    }
+
+    @RequestMapping("/loadindex")
+    public ModelAndView loadIndex(ModelAndView mv, HttpServletRequest request){
         List<Map> maps = categoryService.selectAllCategorys();
         mv.addObject("maps", maps);
         mv.setViewName("index");
@@ -71,7 +86,7 @@ public class PageController {
     }
 
     @RequestMapping("/index/{code}")
-    public void goIndex(@PathVariable String code, @RequestParam(defaultValue = "1") Integer currPage, ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void selectTasksByCodeByPage(@PathVariable String code, @RequestParam(defaultValue = "1") Integer currPage, ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, Object> city = cityService.selectCityByCode(code);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         PageBean<Map<String, Object>> pageBean = taskService.selectTasksByCodeByPage(code, currPage);
@@ -91,7 +106,32 @@ public class PageController {
         }
         request.setAttribute("pageBean", pageBean);
         request.getSession().setAttribute("city", city);
-        request.getRequestDispatcher("/index").forward(request, response);
+        request.getRequestDispatcher("/loadindex").forward(request, response);
+    }
+
+    @RequestMapping("/index/{code}/{genreId}")
+    public void selectTasksByCodeByPageAndGenreId(@PathVariable String code, @PathVariable Integer genreId, @RequestParam(defaultValue = "1") Integer currPage, ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Map<String, Object> city = cityService.selectCityByCode(code);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        PageBean<Map<String, Object>> pageBean = taskService.selectTasksByCodeByPageAndGenreId(code, currPage , genreId);
+        List<Map<String, Object>> tasks = pageBean.getList();
+        for (Map<String, Object> map : tasks) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                if (entry.getKey().equals("finishTime")) {
+                    String finishTime = sdf.format(entry.getValue());
+                    entry.setValue(finishTime);
+                }
+            }
+        }
+        if (tasks.size() != 0) {
+            request.setAttribute("tasks", tasks);
+        } else {
+            request.setAttribute("msg", "抱歉，该城市目前没有待接任务！");
+        }
+        request.setAttribute("pageBean", pageBean);
+        request.setAttribute("genreId", genreId);
+        request.getSession().setAttribute("city", city);
+        request.getRequestDispatcher("/loadindex").forward(request, response);
     }
 
     @RequestMapping("/becomeexpert")
