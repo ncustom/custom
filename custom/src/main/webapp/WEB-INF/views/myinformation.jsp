@@ -16,17 +16,46 @@
         #a1{font-size: 24px;color: #000;line-height: 86px;}
 		.a2{background: #f5f5f5;color: #333333}
 		.a1{float: right;margin-top: 30px;margin-left: 20px;}
-		#img1{width: 50px;height: 50px;float: right;margin-top: 18px;margin-left: 20px;}
+		#div9{width: 150px;height: 200px;float: right;}
+		#img1{width: 50px;height: 50px;margin-top: 18px;margin-left: 20px;}
+		#information{width: 130px;height: 150px;background: red;margin-left: 20px;position: relative;z-index: 99;display: none;}
+		#ul2 li{line-height: 36px;}
 	</style>
+	<script>
+		window.onload = function(){
+			var oImg1 = document.getElementById('img1');
+			var oDiv2 = document.getElementById('information');
+
+			var flag=true;
+			oImg1.onclick = function () {
+				if (flag) {
+					oDiv2.style.display = 'block';
+					flag=false;
+				} else {
+					oDiv2.style.display = 'none';
+					flag=true;
+				}
+			}
+        }
+	</script>
 </head>
 <body>
 	<div id="div3">
 	    <div id="title">
 	        <a id="a1" href="${pageContext.request.contextPath}/index/${city.code}"><b>生活服务平台</b></a>
 			<a class="a2" href="${pageContext.request.contextPath}/changecity">切换城市</a>
-	        <span>北京市</span>
-			<img id="img1" src="${pageContext.request.contextPath}/img/default.png"/>
-			<a class="a1" href="${pageContext.request.contextPath}/myinformation">信息</a>
+	        <span>${city.name}</span>
+			<div id="div9">
+				<img id="img1" src="${pageContext.request.contextPath}/img/default.png"/>
+				<div id="information">
+					<ul id="ul2">
+						<li><a href="${pageContext.request.contextPath}/myinformation">我的信息</a></li>
+						<li><a href="${pageContext.request.contextPath}/updateinfo">更新信息</a></li>
+						<li><a href="${pageContext.request.contextPath}/mytask">我的任务</a></li>
+						<li><a href="${pageContext.request.contextPath}/user1/exit">退出</a></li>
+					</ul>
+				</div>
+			</div>
 			<a class="a1" href="${pageContext.request.contextPath}/historychat">历史聊天</a>
 			<a class="a1" href="${pageContext.request.contextPath}/becomeexpert">成为悬赏专家</a>
 	    </div>
@@ -80,23 +109,7 @@
 			</div>
 		</div> 
 	</div>
-	<script>
-		setInterval("linkweb.innerHTML=new Date().toLocaleString()",1000);
-	</script>
-	<script language="javascript">
-		function time1(){
-		now=new Date(); 定义一个时间对象
-		n = now.getYear()+"-";//得到年份
-		y = now.getMonth()+"-";//得到月份
-		r = now.getDay();//得到天
-		h = now.getHours()+":"; //得到小时
-		m = now.getMinutes()+":"; //得到分钟
-		s = now.getSeconds(); //得到秒
-		document.all["time"].innerHTML="现在时间是："+n+y+r+"\n"+h+m+s;
-		}
-		setInterval('time1()',1000);
-	</script>
-	<script type="text/javascript" src="js/jquery-1.11.2.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-3.2.0.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
 		  $("#task").click(function(){
