@@ -177,7 +177,7 @@
             var oDiv2 = document.getElementById('information');
 
             var flag=true;
-            oImg1.onClick=function () {
+            oImg1.onclick=function () {
                 if (flag) {
                     oDiv2.style.display = 'block';
                     flag=false;
@@ -207,7 +207,7 @@
                         <li><a href="${pageContext.request.contextPath}/myinformation">我的信息</a></li>
                         <li><a href="${pageContext.request.contextPath}/updateinfo">更新信息</a></li>
                         <li><a href="${pageContext.request.contextPath}/mytask">我的任务</a></li>
-                        <li><a href="">退出</a></li>
+                        <li><a href="${pageContext.request.contextPath}/user1/exit">退出</a></li>
                     </ul>
                 </div>
             </div>

@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user1")
@@ -49,7 +50,6 @@ public class User1Controller {
 
     @RequestMapping("/login")
     public void login(User1 user1, Model model, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("login");
         user1.setPwd(MD5.getMD5(user1.getPwd()));
         User1 user = user1Service.checkLogin(user1);
         //不可以登录
@@ -61,7 +61,8 @@ public class User1Controller {
         //可以登录
         model.addAttribute("msg",1);
         request.getSession().setAttribute("login_user",user);
-        request.getRequestDispatcher("/loadindex").forward(request, response);
+        Map<String, Object> city = (Map<String, Object>)request.getSession().getAttribute("city");
+        request.getRequestDispatcher("/index/" + (String)city.get("code")).forward(request, response);
     }
 
     @RequestMapping(value = "/update")
@@ -89,5 +90,13 @@ public class User1Controller {
         userDetail.setAddressDesc(addressDesc);
         userDetail.setDescr(descr);
         return "index";
+    }
+
+    @RequestMapping(value = "/exit")
+    /*对应方法中使用两个对象来接受参数，会报400错误（错误的请求），请求参数赋不到对象的属性上*/
+    public void exit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getSession().setAttribute("login_user", null);
+        Map<String, Object> city = (Map<String, Object>)request.getSession().getAttribute("city");
+        request.getRequestDispatcher("/index/" + (String)city.get("code")).forward(request, response);
     }
 }
