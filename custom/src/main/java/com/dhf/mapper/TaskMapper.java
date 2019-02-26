@@ -7,4 +7,6 @@ public interface TaskMapper {
 
     List<Map<String, Object>> selectTasksByCodeAndPage(Map map);
     Integer selectCountsByCode(String code);
+    Integer selectCountsByCodeAndGenreId(Map map);
+    List<Map<String, Object>> selectTasksByCodeByPageAndGenreId(Map map);
 }

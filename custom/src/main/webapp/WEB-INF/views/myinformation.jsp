@@ -22,7 +22,7 @@
 <body>
 	<div id="div3">
 	    <div id="title">
-	        <a id="a1" href="index.html"><b>生活服务平台</b></a>
+	        <a id="a1" href="${pageContext.request.contextPath}/index/${city.code}"><b>生活服务平台</b></a>
 			<a class="a2" href="${pageContext.request.contextPath}/changecity">切换城市</a>
 	        <span>北京市</span>
 			<img id="img1" src="${pageContext.request.contextPath}/img/default.png"/>

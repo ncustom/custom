@@ -61,7 +61,7 @@ public class User1Controller {
         //可以登录
         model.addAttribute("msg",1);
         request.getSession().setAttribute("login_user",user);
-        request.getRequestDispatcher("/index").forward(request, response);
+        request.getRequestDispatcher("/loadindex").forward(request, response);
     }
 
     @RequestMapping(value = "/update")
